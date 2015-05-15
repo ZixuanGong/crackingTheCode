@@ -1,26 +1,23 @@
+#!/bin/bash
 # split src file into java code and test cases
 awk '
-    /FUNCTION/  { next }
-    /TEST/      { stub_test = 1; next }
+    BEGIN       { f = 1 }
+    NR == 1     { name = $2 }
+    /HISTORY/   { f = 0 }
+    /TEST/      { f = 0; t = 1; next }
     /NOTES/     { exit 0 }
 
     {
-        if (!found_name) {
-            if ($0 == "") {
-                next;
-            } else {
-                name = $2;
-                found_name = 1;
-            }
-        }
-
-        if (stub_test == 0) {
+        if (f)
             print >"_function.txt";
-        } else {
+
+        if (t) {
             if ($0 == "")
                 next;
 
-            print "assert " name "(" $1 ") == " $2 ";" \
+            rhs = $NF;
+            $NF = "";
+            print "assert " name "(" $0 ") == " rhs ";" \
                 >"_tests.txt";
         }
     }

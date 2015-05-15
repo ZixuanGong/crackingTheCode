@@ -1,0 +1,1 @@
+ASCII: 128 characters => 7 bits to represent
