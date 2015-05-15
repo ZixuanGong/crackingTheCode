@@ -1,0 +1,3 @@
+hasUniqChar() == ;
+hasUniqChar("string") == true;
+hasUniqChar("apple") == false;

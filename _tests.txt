@@ -1,0 +1,3 @@
+assert hasUniqChar("string") == true;
+assert hasUniqChar("apple") == false;
+assert hasUniqChar("") == true;
