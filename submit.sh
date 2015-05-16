@@ -23,7 +23,9 @@ awk '
             if ($0 == "")
                 next;
 
-            print "assert " name "(" $1 ")" comp "(" $2 ");" \
+            print "System.err.println(" $1 "+\" -> \"+" name "(" $1 ")+\" | \" +" $2 ");" \
+                >"_tests.txt";
+            print "assert " name "(" $1 ")" comp "(" $2 ");\n" \
                 >"_tests.txt";
         }
     }
