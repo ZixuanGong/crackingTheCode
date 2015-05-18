@@ -1,7 +1,7 @@
 #!/bin/bash
 # split src file into java code and test cases
 awk '
-    BEGIN       { f = 1 }
+    BEGIN       { f = 1; FS = "[( ]" }
     NR == 1     {
         rettype = $1;
         name = $2;
@@ -10,8 +10,11 @@ awk '
             comp = " == ";
         else if (rettype == "String")
             comp = ".equals";
+
+        FS = " ";
     }
     /HISTORY/   { f = 0 }
+    /manual/    { m = 1 }
     /TESTS/     { f = 0; t = 1; FS = "|"; next }
     /NOTES/     { exit 0 }
 
@@ -23,10 +26,19 @@ awk '
             if ($0 == "")
                 next;
 
-            print "System.err.println(" $1 "+\" -> \"+" name "(" $1 ")+\" | \" +" $2 ");" \
-                >"_tests.txt";
-            print "assert " name "(" $1 ")" comp "(" $2 ");\n" \
-                >"_tests.txt";
+            if (!m) {
+                funccall = name "(" $1 ")";
+                expected = $2;
+
+                gsub(/\"/, "\\\"");
+                printable = $1;
+                print "System.err.println(\"" printable "\"+\" -> \"+" funccall "+\" | \" +" expected ");" \
+                    >"_tests.txt";
+                print "assert " funccall comp "(" expected ");\n" \
+                    >"_tests.txt";
+            } else {
+                print >"_tests.txt";
+            }
         }
     }
 ' <$1
@@ -58,7 +70,7 @@ awk '
 
 ' _framework.java > Run.java
 
-rm -f _report.txt
+>_report.txt
 javac Run.java
 java -ea Run 2> _report.txt
 

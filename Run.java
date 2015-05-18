@@ -1,59 +1,48 @@
 import java.util.*;
 
 public class Run {
-	public static String compress (String s) {
-	    // scan s, auto return if ret.length > s.length
+	public static int[][] rot90deg(int[][] img) {
+	    // assume clockwise, in-place
 	
-	    if (s.isEmpty() || s == null)
-	        return s;
+	    // check NxN
+	    if (img == null || img.length == 0 
+	        || img.length != img[0].length)
+	        return null;
 	
-	    int i = 0, j = 0;
-	    int cnt = 0;
-	    StringBuilder ret = new StringBuilder();
+	    int n = img.length;
+	    int n_layer = n/2;
+	    int tmp;
 	
-	    while (j < s.length()) {
-	        if (s.charAt(j) == s.charAt(i)) {
-	            cnt++;
-	        } else {
-	            ret.append(s.charAt(i));
-	            ret.append(cnt);
-	            if (ret.length() >= s.length())
-	                return s;
-	            i = j;
-	            cnt = 1;
+	    for (int j = 0; j < n_layer; j++) {
+	        for (int i = j; i < n-1-j; i++) {
+	            tmp = img[j][i];    // top[i]
+	            img[j][i] = img[n-1-i][j];    // top[i] = left[i]
+	            img[n-1-i][j] = img[n-1-j][n-1-i];  // left[i] = bottom[i]
+	            img[n-1-j][n-1-i] = img[i][n-1-j];  // bottom[i] = right[i]
+	            img[i][n-1-j] = tmp;
 	        }
-	        j++;
 	    }
 	
-	    ret.append(s.charAt(i));
-	    ret.append(cnt);
-	    if (ret.length() >= s.length())
-	                return s;
-	    return ret.toString();
+	    return img;
 	}
 	
 	
     public static void main(String[] args) {
-		System.err.println("aabcccccaaa"+" -> "+compress("aabcccccaaa")+" | " +"a2b1c5a3");
-		assert compress("aabcccccaaa").equals("a2b1c5a3");
-		
-		System.err.println("aaaaa"+" -> "+compress("aaaaa")+" | " +"a5");
-		assert compress("aaaaa").equals("a5");
-		
-		System.err.println("aaaaab"+" -> "+compress("aaaaab")+" | " +"a5b1");
-		assert compress("aaaaab").equals("a5b1");
-		
-		System.err.println("aaab"+" -> "+compress("aaab")+" | " +"aaab");
-		assert compress("aaab").equals("aaab");
-		
-		System.err.println("abcd"+" -> "+compress("abcd")+" | " +"abcd");
-		assert compress("abcd").equals("abcd");
-		
-		System.err.println("aabb"+" -> "+compress("aabb")+" | " +"aabb");
-		assert compress("aabb").equals("aabb");
-		
-		System.err.println(""+" -> "+compress("")+" | " +"");
-		assert compress("").equals("");
-		
+		int[][] ret = rot90deg(new int[][]{{1,2,3},{4,5,6},{7,8,9}});
+		System.out.println(Arrays.deepToString(ret));
+		assert Arrays.deepEquals(ret, new int[][]{{7,4,1},{8,5,2},{9,6,3}});
+		ret = rot90deg(new int[][]{{1,2,3,4},{5,6,7,8},{9,10,11,12},{13,14,15,16}});
+		System.out.println(Arrays.deepToString(ret));
+		assert Arrays.deepEquals(ret, new int[][]{{13,9,5,1},{14,10,6,2},{15,11,7,3},{16,12,8,4}});
+		/*
+		1  2  3  4
+		5  6  7  8
+		9  10 11 12
+		13 14 15 16
+		13  9  5  1
+		14  10 6  2
+		15  11 7  3
+		16  12 8  4
+		*/
     }
 }
