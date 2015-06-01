@@ -2,16 +2,19 @@
 # split src file into java code and test cases
 awk '
     BEGIN       { f = 1; FS = "[( ]" }
+    /TODO/      { print "TODO: " FILENAME; exit 0 }
     NR == 1     {
-        rettype = $1;
-        name = $2;
+        if (f) {
+            rettype = $1;
+            name = $2;
 
-        if (rettype == "boolean")
-            comp = " == ";
-        else if (rettype == "String")
-            comp = ".equals";
+            if (rettype == "boolean")
+                comp = " == ";
+            else if (rettype == "String")
+                comp = ".equals";
 
-        FS = " ";
+            FS = " ";
+        }
     }
     /HISTORY/   { f = 0 }
     /manual/    { m = 1 }
@@ -41,7 +44,7 @@ awk '
             }
         }
     }
-' <$1
+' $1
 
 # process test cases
 # awk '
@@ -72,7 +75,7 @@ awk '
 
 >_report.txt
 javac Run.java
-java -ea Run 2> _report.txt
+java -ea Run >> _report.txt 2>&1
 
 if [[ -n $(grep Exception _report.txt) ]]; then
     cat _report.txt

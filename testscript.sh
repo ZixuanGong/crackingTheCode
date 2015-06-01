@@ -1,4 +1,4 @@
-for file in 1_*.md
+for file in [0-9]_*.md
 do
     submit.sh $file
 done
