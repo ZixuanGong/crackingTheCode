@@ -74,6 +74,7 @@ awk '
 ' _framework.java > Run.java
 
 >_report.txt
+javac Node.java Helper.java
 javac Run.java
 java -ea Run >> _report.txt 2>&1
 
