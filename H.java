@@ -1,4 +1,4 @@
-public final class Helper {
+public final class H {
     public static Node str2list(String s) {
         Node head = new Node();
         Node p = head;
@@ -10,7 +10,7 @@ public final class Helper {
         return head.next;
     }
 
-    public static boolean areEqual(Node p, Node q) {
+    public static boolean areEqualLists(Node p, Node q) {
         while (p != null && q != null) {
             if (p.d_char == q.d_char) {
                 p = p.next;
@@ -24,5 +24,9 @@ public final class Helper {
             return false;
 
         return true;
+    }
+
+    public static boolean areEqual(Node p, Node q) {
+        return p.d_char == q.d_char ? true : false;
     }
 }
